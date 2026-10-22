@@ -1,0 +1,33 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+class Program {
+    static async Task Main() {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes("ThisIsASuperSecretJwtKeyThatIsAtLeast32Chars!");
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[] 
+            {
+                new Claim(ClaimTypes.NameIdentifier, "B3492410-9E68-49EC-D04C-08DE8E027BEF"),
+                new Claim(ClaimTypes.Role, "User")
+            }),
+            Expires = DateTime.UtcNow.AddDays(1),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var tokenString = tokenHandler.WriteToken(token);
+        
+        var client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenString);
+        var response = await client.GetAsync("http://localhost:5031/api/sparepart/get-paged?partCode=ITTEST");
+        var content = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"Status: {response.StatusCode}");
+        Console.WriteLine($"Response: {content}");
+    }
+}

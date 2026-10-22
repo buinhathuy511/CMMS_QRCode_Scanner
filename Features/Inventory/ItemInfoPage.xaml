@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             xmlns:viewmodels="clr-namespace:CMMS_QRCode_Scanner.Features.Inventory"
+             x:Class="CMMS_QRCode_Scanner.Features.Inventory.ItemInfoPage"
+             x:DataType="viewmodels:ItemInfoViewModel"
+             Title="{Binding Title}">
+
+    <Shell.TitleView>
+        <HorizontalStackLayout VerticalOptions="Center" Spacing="15" Margin="10,0,0,0">
+            <Label Text="{Binding Title}" VerticalOptions="Center" TextColor="White" FontSize="18" FontAttributes="Bold" />
+        </HorizontalStackLayout>
+    </Shell.TitleView>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" HorizontalOptions="Center" Margin="20" />
+
+            <!-- Error State -->
+            <VerticalStackLayout IsVisible="{Binding HasError}" Spacing="20" HorizontalOptions="Center" Margin="0,50,0,0">
+                <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource ErrorColor}" Style="{StaticResource Headline}" HorizontalTextAlignment="Center" />
+                <Button Text="QUAY LẠI" Command="{Binding GoBackCommand}" BackgroundColor="{StaticResource Primary}" />
+            </VerticalStackLayout>
+
+            <!-- Base Info Header (Visible if item exists) -->
+            <Border IsVisible="{Binding HasItem}" Stroke="{StaticResource Gray200}" StrokeShape="RoundRectangle 12" Padding="20" BackgroundColor="White">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Entity Type" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding CurrentItem.EntityType}" FontAttributes="Bold" FontSize="18" TextColor="{StaticResource Primary}" />
+                    
+                    <BoxView HeightRequest="1" Color="{StaticResource Gray200}" Margin="0,5" />
+                    
+                    <Label Text="Barcode ID" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding CurrentItem.BarcodeId}" FontAttributes="Bold" FontSize="16" TextColor="#111827" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Non-Coded Spare Part Info -->
+            <VerticalStackLayout IsVisible="{Binding IsNonCoded}" Spacing="15">
+                <VerticalStackLayout>
+                    <Label Text="Part Name" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding NonCodedPart.PartName}" FontAttributes="Bold" TextColor="#111827" />
+                </VerticalStackLayout>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Part Code" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.PartCode}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Specification" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.Specification}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Quantity" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.Quantity}" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Min Stock" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.MinStock}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Unit" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.Unit}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Price" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.Price}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Supplier" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.Supplier}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Department" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.Department}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Location" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.Location}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Age (Days)" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.AgeDays}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Import Date" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.ImportDate}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Status" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding NonCodedPart.Status}" FontAttributes="Bold" TextColor="{StaticResource SuccessColor}" />
+                    </VerticalStackLayout>
+                </Grid>
+                <VerticalStackLayout>
+                    <Label Text="Note" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding NonCodedPart.Note}" FontAttributes="Bold" TextColor="#111827" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- Coded Spare Part Info -->
+            <VerticalStackLayout IsVisible="{Binding IsCoded}" Spacing="15">
+                <VerticalStackLayout>
+                    <Label Text="Part Name" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding CodedPart.PartName}" FontAttributes="Bold" TextColor="#111827" />
+                </VerticalStackLayout>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Part Code" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.PartCode}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Serial Code" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.SerialCode}" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                    </VerticalStackLayout>
+                </Grid>
+                <VerticalStackLayout>
+                    <Label Text="Specification" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding CodedPart.Specification}" FontAttributes="Bold" TextColor="#111827" />
+                </VerticalStackLayout>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Quantity" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.Quantity}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Min Stock" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.MinStock}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Unit" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.Unit}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Price" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.Price}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Supplier" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.Supplier}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Department" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.Department}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Location" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.Location}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Age (Days)" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.AgeDays}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Import Date" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.ImportDate}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Status" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding CodedPart.Status}" FontAttributes="Bold" TextColor="{StaticResource SuccessColor}" />
+                    </VerticalStackLayout>
+                </Grid>
+                <VerticalStackLayout>
+                    <Label Text="Note" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding CodedPart.Note}" FontAttributes="Bold" TextColor="#111827" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- Equipment Info -->
+            <VerticalStackLayout IsVisible="{Binding IsEquipment}" Spacing="15">
+                <VerticalStackLayout>
+                    <Label Text="Equipment Name" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding EquipmentItem.EquipmentName}" FontAttributes="Bold" TextColor="#111827" />
+                </VerticalStackLayout>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Equipment Code" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding EquipmentItem.EquipmentCode}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Asset No" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding EquipmentItem.AssetNo}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Model" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding EquipmentItem.Model}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Serial" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding EquipmentItem.Serial}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                </Grid>
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Location" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding EquipmentItem.Location}" FontAttributes="Bold" TextColor="#111827" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Next Maintenance" TextColor="{StaticResource Gray500}" FontSize="12" />
+                        <Label Text="{Binding EquipmentItem.NextMaintenance}" FontAttributes="Bold" TextColor="{StaticResource ErrorColor}" />
+                    </VerticalStackLayout>
+                </Grid>
+                <VerticalStackLayout>
+                    <Label Text="Status" TextColor="{StaticResource Gray500}" FontSize="12" />
+                    <Label Text="{Binding EquipmentItem.Status}" FontAttributes="Bold" TextColor="{StaticResource Secondary}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,30,0,0" IsVisible="{Binding HasItem}">
+                <Button Grid.Column="0" Text="QUAY LẠI" Command="{Binding GoBackCommand}" BackgroundColor="{StaticResource Gray400}" />
+                <Button Grid.Column="1" Text="EDIT" Command="{Binding EditCommand}" BackgroundColor="{StaticResource Primary}" />
+            </Grid>
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+

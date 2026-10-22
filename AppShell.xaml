@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CMMS_QRCode_Scanner.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:auth="clr-namespace:CMMS_QRCode_Scanner.Features.Authentication"
+    xmlns:dashboard="clr-namespace:CMMS_QRCode_Scanner.Features.Dashboard"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.TabBarIsVisible="False"
+    Title="CMMS_QRCode_Scanner">
+
+    <ShellItem Route="Login">
+        <ShellContent ContentTemplate="{DataTemplate auth:LoginPage}" />
+    </ShellItem>
+
+    <ShellItem Route="Home">
+        <ShellContent ContentTemplate="{DataTemplate dashboard:HomePage}" />
+    </ShellItem>
+
+</Shell>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CMMS_QRCode_Scanner.Features.Scanner.ImageScan"
+             x:Class="CMMS_QRCode_Scanner.Features.Scanner.ImageScan.ScanFromImagePage"
+             x:DataType="viewmodels:ScanFromImageViewModel"
+             Title="{Binding Title}">
+
+    <Shell.TitleView>
+        <HorizontalStackLayout VerticalOptions="Center" Spacing="15" Margin="10,0,0,0">
+            <Label Text="{Binding Title}" VerticalOptions="Center" TextColor="White" FontSize="18" FontAttributes="Bold" />
+        </HorizontalStackLayout>
+    </Shell.TitleView>
+
+    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+
+        <Label Text="Select Image to Scan" Style="{StaticResource SubHeadline}" HorizontalOptions="Start" />
+
+        <Button Text="SELECT IMAGE" 
+                Command="{Binding SelectImageCommand}" 
+                IsEnabled="{Binding IsNotBusy}" />
+        
+        <Border Stroke="{StaticResource Gray200}" StrokeThickness="2" StrokeDashArray="5,5" StrokeShape="RoundRectangle 12" HeightRequest="300" Margin="0,20">
+            <Grid>
+                <Label Text="No image selected" TextColor="{StaticResource Gray400}" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding HasImage, Converter={x:StaticResource InvertedBoolConverter}}" />
+                <!-- Placeholder for selected image -->
+                <BoxView BackgroundColor="{StaticResource Gray200}" IsVisible="{Binding HasImage}" />
+                <Label Text="[Image Preview]" TextColor="{StaticResource Gray900}" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding HasImage}" />
+            </Grid>
+        </Border>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                           IsVisible="{Binding IsBusy}" 
+                           HorizontalOptions="Center" 
+                           Color="{StaticResource Primary}"/>
+
+    </VerticalStackLayout>
+</ContentPage>
+

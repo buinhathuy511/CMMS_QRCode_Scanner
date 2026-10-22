@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CMMS_QRCode_Scanner.Features.Scanner.ScannerMenu"
+             xmlns:models="clr-namespace:CMMS_QRCode_Scanner.Models"
+             x:Class="CMMS_QRCode_Scanner.Features.Scanner.ScannerMenu.ScannerMenuPage"
+             x:DataType="viewmodels:ScannerMenuViewModel"
+             Title="{Binding Title}">
+
+    <Shell.TitleView>
+        <HorizontalStackLayout VerticalOptions="Center" Spacing="15" Margin="10,0,0,0">
+            <Label Text="{Binding Title}" VerticalOptions="Center" TextColor="White" FontSize="18" FontAttributes="Bold" />
+        </HorizontalStackLayout>
+    </Shell.TitleView>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="25">
+            
+            <Label Text="Scan to View or Edit" Style="{StaticResource Headline}" FontSize="20" Margin="0,10,0,10" />
+
+            <!-- SCAN QR CODE (Main Action) -->
+            <Border Stroke="{StaticResource Primary}" StrokeThickness="0" BackgroundColor="{StaticResource Primary}" StrokeShape="RoundRectangle 16" Padding="20">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToScanQrCommand}" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Image Source="scan_qr_code_icon_white.png" HeightRequest="60" HorizontalOptions="Center" />
+                    <Label Text="SCAN QR CODE" TextColor="White" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="Scan Spare Part or Equipment QR Code" TextColor="White" Opacity="0.8" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- SECONDARY ACTIONS -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                
+                <!-- MANUAL ID -->
+                <Border Grid.Column="0" Stroke="{StaticResource Gray200}" BackgroundColor="White" StrokeShape="RoundRectangle 12" Padding="15">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToManualIdCommand}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="MANUAL ID" TextColor="{StaticResource Primary}" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label Text="Enter Barcode ID manually" TextColor="{StaticResource Gray500}" FontSize="12" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+                
+                <!-- SCAN FROM IMAGE -->
+                <Border Grid.Column="1" Stroke="{StaticResource Gray200}" BackgroundColor="White" StrokeShape="RoundRectangle 12" Padding="15">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToScanFromImageCommand}" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="UPLOAD IMAGE" TextColor="{StaticResource Primary}" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label Text="Upload QR image" TextColor="{StaticResource Gray500}" FontSize="12" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+
+            <!-- RECENT SCANS (DYNAMIC) -->
+            <VerticalStackLayout Spacing="10" Margin="0,20,0,0">
+                <Label Text="RECENT SCANS" FontAttributes="Bold" TextColor="{StaticResource Gray900}" />
+                
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentScans}" Spacing="10">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:RecentScanItem">
+                            <Border Stroke="{StaticResource Gray200}" BackgroundColor="White" StrokeShape="RoundRectangle 8" Padding="15">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ScannerMenuViewModel}}, Path=GoToItemInfoCommand}" CommandParameter="{Binding BarcodeId}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="*, Auto">
+                                    <VerticalStackLayout Grid.Column="0">
+                                        <Label Text="{Binding BarcodeId}" FontAttributes="Bold" TextColor="{StaticResource MidnightBlue}" />
+                                        <Label Text="{Binding Description}" TextColor="{StaticResource Gray500}" FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1" Text="{Binding TimeAgo}" TextColor="{StaticResource Gray400}" FontSize="10" VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+

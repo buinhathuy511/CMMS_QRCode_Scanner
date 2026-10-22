@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:CMMS_QRCode_Scanner.Features.ExportOutbound"
+             xmlns:models="clr-namespace:CMMS_QRCode_Scanner.Models"
+             x:Class="CMMS_QRCode_Scanner.Features.ExportOutbound.ExportSetupPage"
+             x:DataType="vm:ExportSetupViewModel"
+             x:Name="exportSetupPage"
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource OffWhite}">
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="16,16,16,36" Spacing="16">
+
+                <!-- Header -->
+                <Label Text="Tạo Đơn Xuất Kho"
+                       FontSize="22" FontAttributes="Bold"
+                       TextColor="{StaticResource OffBlack}" />
+
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="12">
+                    <!-- Movement Type Picker -->
+                    <Border Grid.Column="0" Stroke="{StaticResource LightGray}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 8" Padding="4" BackgroundColor="White">
+                        <VerticalStackLayout Spacing="4" Padding="8">
+                            <Label Text="Hình thức xuất"
+                                   FontSize="12" TextColor="{StaticResource Primary}" FontAttributes="Bold" />
+                            <Picker Title="Chọn hình thức xuất"
+                                    TitleColor="{StaticResource Secondary}"
+                                    TextColor="{StaticResource OffBlack}"
+                                    ItemsSource="{Binding MovementTypes}"
+                                    SelectedItem="{Binding SelectedMovementType}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Export Date -->
+                    <Border Grid.Column="1" Stroke="{StaticResource LightGray}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 8" Padding="4" BackgroundColor="White">
+                        <VerticalStackLayout Spacing="4" Padding="8">
+                            <Label Text="Ngày Xuất"
+                                   FontSize="12" TextColor="{StaticResource Primary}" FontAttributes="Bold" />
+                            <DatePicker Date="{Binding ExportDate}"
+                                        TextColor="{StaticResource OffBlack}"
+                                        Format="yyyy-MM-dd" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!-- Scan Button -->
+                <Button Text="📷  SCAN QR ĐỂ THÊM PHỤ TÙNG"
+                        Command="{Binding ScanQrCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontSize="16" FontAttributes="Bold"
+                        HeightRequest="50"
+                        CornerRadius="10" />
+
+                <!-- Status Message -->
+                <Border IsVisible="{Binding HasStatusMessage}"
+                        BackgroundColor="{Binding StatusBgColor}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 8" Padding="12">
+                    <Label Text="{Binding StatusMessage}" FontSize="13"
+                           TextColor="{Binding StatusTextColor}" />
+                </Border>
+
+                <!-- Export Items Header -->
+                <Grid ColumnDefinitions="*, Auto" Margin="0,8,0,0">
+                    <Label Grid.Column="0" Text="Danh sách phụ tùng xuất"
+                           FontSize="16" FontAttributes="Bold" TextColor="{StaticResource OffBlack}" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{Binding TotalSummary}"
+                           FontSize="14" TextColor="{StaticResource Secondary}" VerticalOptions="Center" />
+                </Grid>
+
+                <!-- Empty State -->
+                <Border IsVisible="{Binding IsEmpty}" StrokeThickness="0" BackgroundColor="#F5F5F5"
+                        StrokeShape="RoundRectangle 8" Padding="30" x:Name="emptyState">
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Label Text="📦" FontSize="36" HorizontalOptions="Center" />
+                        <Label Text="Chưa có phụ tùng nào được thêm."
+                               TextColor="{StaticResource Secondary}" HorizontalOptions="Center" />
+                        <Label Text="Bấm 'Scan QR' để bắt đầu quét."
+                               TextColor="{StaticResource Secondary}" FontSize="12" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Export Items List (Using BindableLayout to prevent Android RecyclerView/ScrollView measure conflict) -->
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding ExportItems}"
+                                     IsVisible="{Binding HasItems}"
+                                     Spacing="8"
+                                     x:Name="itemsList">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:ExportLineItem">
+                            <Border Stroke="{StaticResource LightGray}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10" Padding="12" Margin="0,2"
+                                    BackgroundColor="White">
+                                <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="6">
+
+                                    <!-- Row 0: Part Code + Name -->
+                                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                                        <Label Text="{Binding PartCode}"
+                                               FontSize="15" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                                        <Label Text="{Binding PartName}"
+                                               FontSize="13" TextColor="{StaticResource OffBlack}" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Row 0: Delete Button -->
+                                    <Button Grid.Row="0" Grid.Column="1"
+                                            Text="🗑"
+                                            FontSize="18"
+                                            BackgroundColor="Transparent"
+                                            TextColor="#EF5350"
+                                            WidthRequest="40" HeightRequest="40"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExportSetupViewModel}}, Path=RemoveItemCommand}"
+                                            CommandParameter="{Binding .}"
+                                            VerticalOptions="Start" HorizontalOptions="End" />
+
+                                    <!-- Row 1 (Non-Coded): FIFO Info + Stock -->
+                                    <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Spacing="12"
+                                                           IsVisible="{Binding IsQuantityEditable}">
+                                        <Label FontSize="12" TextColor="{StaticResource Secondary}"
+                                               Text="Serial: FIFO Tự Động" />
+                                        <Label Text="{Binding StockInfo}"
+                                               FontSize="12" TextColor="#2E7D32" />
+                                        <Label Text="⚠️ Vượt tồn kho!"
+                                               FontSize="12" TextColor="#C62828" FontAttributes="Bold"
+                                               IsVisible="{Binding IsOverStock}" />
+                                    </HorizontalStackLayout>
+
+                                    <!-- Row 1 (Coded): Serial Selection Dropdown + Scan Button -->
+                                    <VerticalStackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                         IsVisible="{Binding IsCoded}" Spacing="6" Margin="0,2,0,2">
+                                        <Label Text="Chọn mã Serial xuất kho:" FontSize="12" FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}" />
+
+                                        <Grid ColumnDefinitions="*, Auto" ColumnSpacing="8">
+                                            <!-- Serial Picker -->
+                                            <Border Grid.Column="0" Stroke="{StaticResource Primary}" StrokeThickness="1"
+                                                    StrokeShape="RoundRectangle 8" Padding="10,0" BackgroundColor="#F8FAFC"
+                                                    HeightRequest="42">
+                                                <Picker Title="-- Chọn mã Serial --"
+                                                        TitleColor="{StaticResource Secondary}"
+                                                        TextColor="#111827"
+                                                        FontSize="13"
+                                                        FontAttributes="Bold"
+                                                        ItemsSource="{Binding AvailableSerials}"
+                                                        SelectedItem="{Binding SelectedSerial}"
+                                                        VerticalOptions="Center" />
+                                            </Border>
+
+                                            <!-- Quick Scan Serial QR Button -->
+                                            <Button Grid.Column="1" Text="📷 Quét"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExportSetupViewModel}}, Path=ScanSerialForLineCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#ECEFF1" TextColor="{StaticResource OffBlack}"
+                                                    FontSize="12" FontAttributes="Bold" HeightRequest="42" CornerRadius="8"
+                                                    Padding="12,0" />
+                                        </Grid>
+
+                                        <!-- Loading indicator -->
+                                        <HorizontalStackLayout Spacing="6" IsVisible="{Binding IsLoadingSerials}">
+                                            <ActivityIndicator IsRunning="{Binding IsLoadingSerials}" HeightRequest="14" WidthRequest="14" Color="{StaticResource Primary}" />
+                                            <Label Text="Đang tải danh sách Serial..." FontSize="11" TextColor="{StaticResource Secondary}" VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+
+                                        <!-- Warning if no serial available -->
+                                        <Label Text="⚠️ Không có Serial khả dụng trong kho!"
+                                               TextColor="#C62828" FontSize="11" FontAttributes="Bold"
+                                               IsVisible="{Binding HasNoSerials}" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Row 2: Quantity -->
+                                    <HorizontalStackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Spacing="8"
+                                                           VerticalOptions="Center">
+                                        <Label Text="Số lượng:" FontSize="13" VerticalOptions="Center"
+                                               TextColor="{StaticResource OffBlack}" />
+
+                                        <!-- Editable quantity for Non-Coded -->
+                                        <Border IsVisible="{Binding IsQuantityEditable}"
+                                                Stroke="{StaticResource Primary}" StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 6" Padding="8,0"
+                                                BackgroundColor="#F9FAFB" WidthRequest="90" HeightRequest="40">
+                                            <Entry Text="{Binding Quantity}"
+                                                   TextColor="#111827"
+                                                   BackgroundColor="Transparent"
+                                                   Keyboard="Numeric"
+                                                   ClearButtonVisibility="WhileEditing"
+                                                   FontSize="15"
+                                                   FontAttributes="Bold"
+                                                   VerticalOptions="Center"
+                                                   HorizontalTextAlignment="Center" />
+                                        </Border>
+
+                                        <!-- Fixed quantity for Coded -->
+                                        <Label IsVisible="{Binding IsCoded}"
+                                               Text="1" FontSize="14" FontAttributes="Bold"
+                                               TextColor="{StaticResource OffBlack}" VerticalOptions="Center" />
+
+                                        <Label Text="{Binding Unit}" FontSize="12"
+                                               TextColor="{StaticResource Secondary}" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Action Buttons (inside ScrollView to avoid navigation bar clipping) -->
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="12" Margin="0,16,0,24">
+                    <Button Grid.Column="0" Text="Hủy"
+                            Command="{Binding CancelCommand}"
+                            BackgroundColor="#ECEFF1" TextColor="{StaticResource OffBlack}"
+                            FontAttributes="Bold" CornerRadius="10" HeightRequest="48" />
+
+                    <Button Grid.Column="1" Text="Lưu Phiếu"
+                            Command="{Binding SubmitExportCommand}"
+                            IsEnabled="{Binding CanSubmit}"
+                            BackgroundColor="{StaticResource Primary}" TextColor="White"
+                            FontAttributes="Bold" CornerRadius="10" HeightRequest="48" />
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Loading Overlay -->
+        <Grid BackgroundColor="#88000000" IsVisible="{Binding IsBusy}">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="12">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" Color="White" />
+                <Label Text="Đang xử lý..." TextColor="White" FontSize="14" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+
+</ContentPage>

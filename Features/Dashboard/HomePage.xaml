@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CMMS_QRCode_Scanner.Features.Dashboard"
+             x:Class="CMMS_QRCode_Scanner.Features.Dashboard.HomePage"
+             x:DataType="viewmodels:HomeViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="30">
+            
+            <!-- HEADER -->
+            <VerticalStackLayout Margin="0,10,0,20" Spacing="5">
+                <Label Text="CMMS QR Code Scanner" Style="{StaticResource Headline}" FontSize="20" HorizontalOptions="Start" />
+                
+                <Grid ColumnDefinitions="*, Auto">
+                    <Label Grid.Column="0" Text="{Binding WelcomeMessage}" TextColor="{StaticResource Secondary}" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                    
+                    <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Center" HorizontalOptions="End">
+                        <HorizontalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                        </HorizontalStackLayout.GestureRecognizers>
+                        <Label Text="Logout" TextColor="{StaticResource Primary}" VerticalOptions="Center" FontAttributes="Bold" />
+                        <Image Source="logout_icon.png" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+
+            <Label Text="Select Workflow" Style="{StaticResource SubHeadline}" />
+
+            <!-- VIEW / EDIT ACTION -->
+            <Border Stroke="{StaticResource Primary}" StrokeThickness="0" BackgroundColor="{StaticResource Primary}" StrokeShape="RoundRectangle 16" Padding="25">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToViewEditCommand}" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="VIEW / EDIT ITEM" TextColor="White" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="Scan QR or enter ID to view/edit details" TextColor="White" Opacity="0.8" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- EXPORT OUTBOUND ACTION -->
+            <Border Stroke="{StaticResource SuccessColor}" StrokeThickness="0" BackgroundColor="{StaticResource SuccessColor}" StrokeShape="RoundRectangle 16" Padding="25">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToExportOutboundCommand}" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="EXPORT OUTBOUND" TextColor="White" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="Create inventory outbound transaction" TextColor="White" Opacity="0.8" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+

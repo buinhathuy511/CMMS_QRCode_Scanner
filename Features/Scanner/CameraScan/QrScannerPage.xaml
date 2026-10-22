@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CMMS_QRCode_Scanner.Features.Scanner.CameraScan"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             x:Class="CMMS_QRCode_Scanner.Features.Scanner.CameraScan.QrScannerPage"
+             x:DataType="viewmodels:QrScannerViewModel"
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource OffBlack}">
+
+    <Grid>
+        <!-- Real Camera Scanner View -->
+        <zxing:CameraBarcodeReaderView x:Name="barcodeReader"
+                                       BarcodesDetected="CameraBarcodeReaderView_BarcodesDetected"
+                                       IsDetecting="{Binding IsDetecting}"
+                                       HorizontalOptions="Fill" 
+                                       VerticalOptions="Fill" />
+
+
+        <!-- Overlay UI (Viewfinder & Controls) -->
+        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20" InputTransparent="True">
+            <!-- Viewfinder frame -->
+            <Border Stroke="{StaticResource Primary}" StrokeThickness="4" WidthRequest="250" HeightRequest="250" StrokeShape="RoundRectangle 20" BackgroundColor="Transparent" Opacity="0.8">
+                <!-- Scanner Line Animation placeholder -->
+                <BoxView HeightRequest="2" BackgroundColor="{StaticResource Primary}" VerticalOptions="Start" />
+            </Border>
+            <Label Text="Place the QR code inside the frame" TextColor="White" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <!-- Loading / Processing State Overlay -->
+        <Grid BackgroundColor="#dd000000" IsVisible="{Binding IsProcessing}" Padding="30">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
+                <ActivityIndicator IsRunning="{Binding IsProcessing}" Color="{StaticResource Primary}" />
+                <Label Text="Processing..." TextColor="White" Style="{StaticResource SubHeadline}" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Error State Overlay -->
+        <Grid BackgroundColor="#dd000000" IsVisible="{Binding HasError}" Padding="30">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
+                <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource ErrorColor}" Style="{StaticResource Headline}" />
+                <Button Text="TRY AGAIN" Command="{Binding RetryCommand}" BackgroundColor="{StaticResource ErrorColor}" WidthRequest="200" Margin="0,20,0,0"/>
+                <Button Text="GO BACK" Command="{Binding GoBackCommand}" BackgroundColor="Transparent" TextColor="White" />
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+
+</ContentPage>
+

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CMMS_QRCode_Scanner.Features.Inventory"
+             x:Class="CMMS_QRCode_Scanner.Features.Inventory.DummyResultPage"
+             x:DataType="viewmodels:DummyResultViewModel"
+             Title="{Binding Title}">
+
+    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+        <Label Text="Scan Result" Style="{StaticResource Headline}" TextColor="{StaticResource Primary}" />
+        
+        <Border Stroke="{StaticResource Gray200}" StrokeShape="RoundRectangle 12" Padding="20">
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Entity Type: Mock Entity" />
+                <Label Text="{Binding BarcodeId, StringFormat='Barcode ID: {0}'}" FontAttributes="Bold" FontSize="18" />
+            </VerticalStackLayout>
+        </Border>
+
+    </VerticalStackLayout>
+</ContentPage>
+
