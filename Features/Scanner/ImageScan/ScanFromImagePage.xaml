@@ -12,20 +12,32 @@
         </HorizontalStackLayout>
     </Shell.TitleView>
 
-    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+    <VerticalStackLayout Padding="24" Spacing="20" VerticalOptions="Center">
 
-        <Label Text="Select Image to Scan" Style="{StaticResource SubHeadline}" HorizontalOptions="Start" />
+        <Label Text="Chọn hình ảnh chứa mã QR / Barcode" Style="{StaticResource SubHeadline}" HorizontalOptions="Start" />
 
-        <Button Text="SELECT IMAGE" 
+        <Button Text="🖼️  CHỌN ẢNH TỪ THIẾT BỊ" 
                 Command="{Binding SelectImageCommand}" 
-                IsEnabled="{Binding IsNotBusy}" />
+                IsEnabled="{Binding IsNotBusy}"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"
+                FontAttributes="Bold"
+                HeightRequest="50"
+                CornerRadius="10" />
         
-        <Border Stroke="{StaticResource Gray200}" StrokeThickness="2" StrokeDashArray="5,5" StrokeShape="RoundRectangle 12" HeightRequest="300" Margin="0,20">
+        <Border Stroke="{StaticResource Gray200}" StrokeThickness="1" StrokeShape="RoundRectangle 12" HeightRequest="260" Margin="0,10" BackgroundColor="White">
             <Grid>
-                <Label Text="No image selected" TextColor="{StaticResource Gray400}" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding HasImage, Converter={x:StaticResource InvertedBoolConverter}}" />
-                <!-- Placeholder for selected image -->
-                <BoxView BackgroundColor="{StaticResource Gray200}" IsVisible="{Binding HasImage}" />
-                <Label Text="[Image Preview]" TextColor="{StaticResource Gray900}" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding HasImage}" />
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8" IsVisible="{Binding HasNoImage}">
+                    <Label Text="📷" FontSize="36" HorizontalOptions="Center" />
+                    <Label Text="Chưa chọn ảnh nào" TextColor="{StaticResource Gray500}" HorizontalOptions="Center" FontAttributes="Bold" />
+                    <Label Text="Nhấn nút phía trên để chọn ảnh từ thư viện" TextColor="{StaticResource Gray400}" FontSize="12" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- Processing state -->
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="10" IsVisible="{Binding HasImage}">
+                    <ActivityIndicator IsRunning="True" Color="{StaticResource Primary}" WidthRequest="36" HeightRequest="36" HorizontalOptions="Center" />
+                    <Label Text="Đang phân tích mã trong ảnh..." TextColor="{StaticResource Gray900}" HorizontalOptions="Center" FontAttributes="Bold" />
+                </VerticalStackLayout>
             </Grid>
         </Border>
 
