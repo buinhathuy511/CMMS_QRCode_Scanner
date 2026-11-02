@@ -46,14 +46,48 @@
                     </Border>
                 </Grid>
 
-                <!-- Scan Button -->
-                <Button Text="📷  SCAN QR ĐỂ THÊM PHỤ TÙNG"
-                        Command="{Binding ScanQrCommand}"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        FontSize="16" FontAttributes="Bold"
-                        HeightRequest="50"
-                        CornerRadius="10" />
+                <!-- Scan / Input Section -->
+                <VerticalStackLayout Spacing="10">
+                    <!-- SCAN QR CODE (Main Action) -->
+                    <Button Text="📷  SCAN QR ĐỂ THÊM PHỤ TÙNG"
+                            Command="{Binding ScanQrCommand}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            FontSize="15" FontAttributes="Bold"
+                            HeightRequest="50"
+                            CornerRadius="10" />
+
+                    <!-- SECONDARY ACTIONS: MANUAL ID & UPLOAD IMAGE -->
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="10">
+                        <!-- MANUAL ID -->
+                        <Border Grid.Column="0" Stroke="{StaticResource LightGray}" StrokeThickness="1"
+                                BackgroundColor="White" StrokeShape="RoundRectangle 10" Padding="12">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoToManualIdCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Label Text="⌨️ MANUAL ID" TextColor="{StaticResource Primary}" 
+                                       FontAttributes="Bold" FontSize="13" HorizontalOptions="Center" />
+                                <Label Text="Nhập mã barcode thủ công" TextColor="{StaticResource Secondary}" 
+                                       FontSize="11" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- UPLOAD IMAGE -->
+                        <Border Grid.Column="1" Stroke="{StaticResource LightGray}" StrokeThickness="1"
+                                BackgroundColor="White" StrokeShape="RoundRectangle 10" Padding="12">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoToScanFromImageCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Label Text="🖼️ UPLOAD IMAGE" TextColor="{StaticResource Primary}" 
+                                       FontAttributes="Bold" FontSize="13" HorizontalOptions="Center" />
+                                <Label Text="Tải ảnh QR từ thiết bị" TextColor="{StaticResource Secondary}" 
+                                       FontSize="11" HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
 
                 <!-- Status Message -->
                 <Border IsVisible="{Binding HasStatusMessage}"

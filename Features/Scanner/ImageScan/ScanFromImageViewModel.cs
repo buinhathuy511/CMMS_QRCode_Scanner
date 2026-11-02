@@ -6,19 +6,35 @@ using Microsoft.Maui.Controls;
 
 namespace CMMS_QRCode_Scanner.Features.Scanner.ImageScan
 {
+    [QueryProperty(nameof(Mode), "Mode")]
     public partial class ScanFromImageViewModel : BaseViewModel
     {
+        [ObservableProperty]
+        private string mode = string.Empty;
+
         public ScanFromImageViewModel()
         {
             Title = "Scan from Image";
         }
 
+        partial void OnModeChanged(string value)
+        {
+            if (string.Equals(value, "export", System.StringComparison.OrdinalIgnoreCase))
+            {
+                Title = "Quét Ảnh QR (Xuất Kho)";
+            }
+        }
+
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasNoImage))]
         private bool hasImage;
+
+        public bool HasNoImage => !HasImage;
 
         [RelayCommand]
         public async Task SelectImageAsync()
         {
+            if (IsBusy) return;
             IsBusy = true;
             try
             {
@@ -42,16 +58,25 @@ namespace CMMS_QRCode_Scanner.Features.Scanner.ImageScan
                         var barcodeResult = reader.Decode(bitmap);
                         if (barcodeResult != null && !string.IsNullOrEmpty(barcodeResult.Text))
                         {
-                            await Shell.Current.GoToAsync($"ItemInfo?BarcodeId={barcodeResult.Text}");
+                            var trimmedCode = barcodeResult.Text.Trim();
+                            if (string.Equals(Mode, "export", System.StringComparison.OrdinalIgnoreCase))
+                            {
+                                // Return to ExportSetupPage with the scanned barcode from image
+                                await Shell.Current.GoToAsync($"..?ScannedBarcodeId={Uri.EscapeDataString(trimmedCode)}");
+                            }
+                            else
+                            {
+                                await Shell.Current.GoToAsync($"ItemInfo?BarcodeId={Uri.EscapeDataString(trimmedCode)}");
+                            }
                         }
                         else
                         {
-                            await Application.Current.MainPage.DisplayAlert("Lỗi", "Không tìm thấy mã vạch hoặc QR Code trong ảnh.", "OK");
+                            await Shell.Current.DisplayAlert("Lỗi", "Không tìm thấy mã vạch hoặc QR Code trong ảnh.", "OK");
                         }
                     }
                     else
                     {
-                        await Application.Current.MainPage.DisplayAlert("Lỗi", "Không thể đọc ảnh.", "OK");
+                        await Shell.Current.DisplayAlert("Lỗi", "Không thể đọc ảnh.", "OK");
                     }
                     
                     HasImage = false; // Reset
@@ -59,9 +84,12 @@ namespace CMMS_QRCode_Scanner.Features.Scanner.ImageScan
             }
             catch (System.Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Lỗi", ex.Message, "OK");
+                await Shell.Current.DisplayAlert("Lỗi", ex.Message, "OK");
             }
-            IsBusy = false;
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

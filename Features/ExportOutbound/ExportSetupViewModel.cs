@@ -187,9 +187,9 @@ namespace CMMS_QRCode_Scanner.Features.ExportOutbound
                 }
 
                 // Equipment is not allowed
-                if (item is Equipment)
+                if (item is Equipment eq)
                 {
-                    ShowStatus("Equipment không được phép xuất kho.", true);
+                    ShowStatus($"Mã QR thuộc Thiết bị '{eq.EquipmentCode} - {eq.EquipmentName}'. Chức năng xuất kho chỉ áp dụng cho Phụ tùng (Spare Part).", true);
                     return;
                 }
 
@@ -250,6 +250,11 @@ namespace CMMS_QRCode_Scanner.Features.ExportOutbound
 
                     ShowStatus($"Đã thêm: {sp.PartCode} - {sp.PartName} (Tồn: {sp.Quantity} {sp.Unit})", false);
                 }
+                else
+                {
+                    ShowStatus("Mã này không phải là Phụ tùng (Spare Part).", true);
+                    return;
+                }
 
                 NotifyCanSubmitChanged();
             }
@@ -270,6 +275,20 @@ namespace CMMS_QRCode_Scanner.Features.ExportOutbound
         {
             // Navigate to scanner in export mode; scanner will return here with ScannedBarcodeId
             await Shell.Current.GoToAsync($"QrScanner?Mode=export");
+        }
+
+        [RelayCommand]
+        public async Task GoToManualIdAsync()
+        {
+            // Navigate to manual barcode input in export mode
+            await Shell.Current.GoToAsync("ManualId?Mode=export");
+        }
+
+        [RelayCommand]
+        public async Task GoToScanFromImageAsync()
+        {
+            // Navigate to upload image scanner in export mode
+            await Shell.Current.GoToAsync("ScanFromImage?Mode=export");
         }
 
         [RelayCommand]
@@ -338,6 +357,12 @@ namespace CMMS_QRCode_Scanner.Features.ExportOutbound
         [RelayCommand]
         public async Task SubmitExportAsync()
         {
+            if (SelectedMovementType == null)
+            {
+                ShowStatus("Vui lòng chọn hình thức xuất kho.", true);
+                return;
+            }
+
             if (!CanSubmit) return;
 
             // Validate quantities and serials

@@ -215,18 +215,59 @@ namespace CMMS_QRCode_Scanner.Services
                 return false;
             }
         }
+        private static readonly string[] AllowedExportMovementTypes = new[]
+        {
+            "Maintenance",
+            "Production",
+            "Scrap",
+            "Supplier Return"
+        };
+
+        private static readonly List<MovementTypeItem> DefaultExportMovementTypes = new()
+        {
+            new() { MovementTypeID = 1, MovementTypeName = "Maintenance" },
+            new() { MovementTypeID = 2, MovementTypeName = "Production" },
+            new() { MovementTypeID = 3, MovementTypeName = "Scrap" },
+            new() { MovementTypeID = 4, MovementTypeName = "Supplier Return" }
+        };
+
         public async Task<List<MovementTypeItem>> GetMovementTypesAsync()
         {
             try
             {
                 await AttachAuthorizationHeaderAsync();
                 var result = await _httpClient.GetFromJsonAsync<List<MovementTypeItem>>($"{AppConfig.BaseApiUrl}SparePart/movement-types");
-                return result ?? new List<MovementTypeItem>();
+                if (result != null && result.Count > 0)
+                {
+                    // Filter to only the 4 allowed export movement types
+                    var filtered = new List<MovementTypeItem>();
+                    foreach (var allowed in AllowedExportMovementTypes)
+                    {
+                        var match = result.FirstOrDefault(r => string.Equals(r.MovementTypeName?.Trim(), allowed, StringComparison.OrdinalIgnoreCase));
+                        if (match != null)
+                        {
+                            filtered.Add(match);
+                        }
+                        else
+                        {
+                            var def = DefaultExportMovementTypes.First(d => d.MovementTypeName == allowed);
+                            filtered.Add(def);
+                        }
+                    }
+
+                    if (filtered.Count > 0)
+                    {
+                        return filtered;
+                    }
+                }
+
+                return new List<MovementTypeItem>(DefaultExportMovementTypes);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"API Error (GetMovementTypes): {ex.Message}");
-                return new List<MovementTypeItem>();
+                // Return the 4 allowed types as safe fallback so user is never blocked
+                return new List<MovementTypeItem>(DefaultExportMovementTypes);
             }
         }
 

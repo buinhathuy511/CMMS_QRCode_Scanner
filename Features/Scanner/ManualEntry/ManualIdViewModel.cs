@@ -6,11 +6,23 @@ using Microsoft.Maui.Controls;
 
 namespace CMMS_QRCode_Scanner.Features.Scanner.ManualEntry
 {
+    [QueryProperty(nameof(Mode), "Mode")]
     public partial class ManualIdViewModel : BaseViewModel
     {
+        [ObservableProperty]
+        private string mode = string.Empty;
+
         public ManualIdViewModel()
         {
             Title = "Enter Barcode ID";
+        }
+
+        partial void OnModeChanged(string value)
+        {
+            if (string.Equals(value, "export", System.StringComparison.OrdinalIgnoreCase))
+            {
+                Title = "Nhập Mã Barcode (Xuất Kho)";
+            }
         }
 
         [ObservableProperty]
@@ -30,18 +42,27 @@ namespace CMMS_QRCode_Scanner.Features.Scanner.ManualEntry
 
             if (string.IsNullOrWhiteSpace(BarcodeId))
             {
-                ErrorMessage = "Please enter a Barcode ID.";
+                ErrorMessage = "Vui lòng nhập Barcode ID.";
                 HasError = true;
                 return;
             }
 
             IsBusy = true;
 
-            // Navigate to real ItemInfo page
-            await Shell.Current.GoToAsync($"ItemInfo?BarcodeId={BarcodeId}");
-            
+            var trimmedId = BarcodeId.Trim();
             BarcodeId = string.Empty; // Reset form
-            
+
+            if (string.Equals(Mode, "export", System.StringComparison.OrdinalIgnoreCase))
+            {
+                // Return to ExportSetupPage with the entered barcode
+                await Shell.Current.GoToAsync($"..?ScannedBarcodeId={Uri.EscapeDataString(trimmedId)}");
+            }
+            else
+            {
+                // Navigate to real ItemInfo page
+                await Shell.Current.GoToAsync($"ItemInfo?BarcodeId={Uri.EscapeDataString(trimmedId)}");
+            }
+
             IsBusy = false;
         }
     }
